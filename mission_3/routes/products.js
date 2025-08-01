@@ -45,7 +45,23 @@ router.route('/')
 
   // Inquiry all products
   .get(async (req, res) => {
-    const { offset = 0, limit = 10 } = req.query;
+    const { 
+      offset = 0, 
+      limit = 10, 
+      sort = 'recent' 
+    } = req.query;
+
+    let productsSort = '';
+
+    switch (sort) {
+      case 'old':
+        productsSort = 'asc';
+        break;
+
+      case 'recent':
+      default:
+        productsSort = 'desc';
+    }
 
     try {
       const products = await prisma.product.findMany({
@@ -54,6 +70,9 @@ router.route('/')
           name: true,
           price: true,
           createdAt: true
+        },
+        orderBy: {
+          createdAt: productsSort
         },
         skip: offset * limit,
         take: limit
@@ -164,6 +183,6 @@ router.route('/:id')
     }
   });
 
-  
+
 
   export default router;
