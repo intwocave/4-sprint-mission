@@ -62,4 +62,44 @@ router.route('/:id')
     }
   })
 
+  // Modify a article property
+  .patch(async (req, res) => {
+    const { id } = req.params;
+    if (!id) 
+      return res.status(400).json({ message: "Invalid parameter 'id'" });
+
+    // Columns in model Product
+    const articleCols = [
+      "title",
+      "content"
+    ];
+
+    const filteredBody = Object.entries(req.body)
+      .filter(e => articleCols.includes(e[0]))
+      .reduce((obj, ele) => {
+        obj[ele[0]] = ele[1];
+        return obj;
+      }, {});
+
+    try {
+      const article = await prisma.article.update({
+        where: {
+          id: Number(id)
+        },
+        data: {
+          ...filteredBody
+        }
+      });
+
+      if (article)
+        res.status(200).json(article);
+      else
+        res.status(404).json({ message: `Cannot find product with ID ${id}` });
+    } catch (err) {
+      console.error('An error has occurred: ', err.message);
+
+      res.status(500).json({ message: "An error has occurred during processing sql" });
+    }
+  });
+
 export default router;
