@@ -116,4 +116,27 @@ app.patch('/product/:id', async (req, res) => {
   }
 });
 
+app.delete('/product/:id', async (req, res) => {
+  const { id } = req.params;
+  if (!id)
+    return res.status(400).json({ message: "Invalid parameter 'id'" });
+
+  try {
+    const deleted = await prisma.product.delete({
+      where: {
+        id: Number(id)
+      }
+    });
+  } catch (err) {
+    console.error('An error has occurred: ', err.message);
+
+    res.status(500).json({ message: "An error has occurred during processing sql" });
+  }
+
+  if (product)
+    res.status(200).json(product);
+  else 
+    res.status(404).json({ message: `Cannot find product with ID ${id}` });
+});
+
 app.listen(PORT, () => console.log(`Server started on port ${PORT}..`));
