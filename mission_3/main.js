@@ -13,7 +13,10 @@ function logRequest(req, res, next) {
   next();
 }
 
-app.post('/product', logRequest, async (req, res) => {
+// middleware for loggin all http request
+app.use(logRequest);
+
+app.post('/product', async (req, res) => {
 
   // destructuring field data from request body
   const {
@@ -49,7 +52,7 @@ app.post('/product', logRequest, async (req, res) => {
 
 });
 
-app.get('/product/:id', logRequest, async (req, res) => {
+app.get('/product/:id', async (req, res) => {
   const { id } = req.params;
   if (!id)
     return res.status(400).json({ "message": "Invalid parameter 'id'" });
