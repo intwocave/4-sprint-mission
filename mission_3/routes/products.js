@@ -159,7 +159,7 @@ router.route('/:id')
     }
   })
 
-  // Look up a particular product
+  // Delete a particular product
   .delete(async (req, res) => {
     const { id } = req.params;
     if (!id)
