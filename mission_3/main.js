@@ -139,4 +139,30 @@ app.delete('/product/:id', async (req, res) => {
   }
 });
 
+app.get('/product', async (req, res) => {
+  const { offset = 0, limit = 10 } = req.query;
+
+  try {
+    const products = await prisma.product.findMany({
+      select: {
+        id: true,
+        name: true,
+        price: true,
+        createdAt: true
+      },
+      skip: offset * limit,
+      take: limit
+    });
+
+    if (products)
+      res.status(200).json(products);
+    else 
+      res.status(404).json({ message: `Cannot find product with ID ${id}` });
+  } catch (err) {
+    console.error('An error has occurred: ', err.message);
+
+    res.status(500).json({ message: "An error has occurred during processing sql" });
+  }
+});
+
 app.listen(PORT, () => console.log(`Server started on port ${PORT}..`));
