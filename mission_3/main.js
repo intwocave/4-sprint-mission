@@ -16,6 +16,7 @@ function logRequest(req, res, next) {
 // middleware for loggin all http request
 app.use(logRequest);
 
+// Upload a new product
 app.post('/product', async (req, res) => {
 
   // destructuring field data from request body
@@ -52,6 +53,7 @@ app.post('/product', async (req, res) => {
 
 });
 
+// Get informations of a certain product
 app.get('/product/:id', async (req, res) => {
   const { id } = req.params;
   if (!id)
@@ -75,6 +77,7 @@ app.get('/product/:id', async (req, res) => {
   }
 });
 
+// Modify a product property
 app.patch('/product/:id', async (req, res) => {
   const { id } = req.params;
   if (!id)
@@ -116,6 +119,7 @@ app.patch('/product/:id', async (req, res) => {
   }
 });
 
+// Look up a particular product
 app.delete('/product/:id', async (req, res) => {
   const { id } = req.params;
   if (!id)
@@ -139,6 +143,7 @@ app.delete('/product/:id', async (req, res) => {
   }
 });
 
+// Inquiry all products
 app.get('/product', async (req, res) => {
   const { offset = 0, limit = 10 } = req.query;
 
