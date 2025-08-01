@@ -23,7 +23,7 @@ app.post('/product', logRequest, async (req, res) => {
     tags
   } = req.body;
 
-  // validation logic (possible improvements with Zod libraries in the future)
+  // validation logic (possible improvements with Zod library in the future)
   if ( !name || !description || !price || !tags )
     return res.status(500).json({ message: "Invalid SQL Parameters" });
 
@@ -46,6 +46,10 @@ app.post('/product', logRequest, async (req, res) => {
 
     res.status(500).json({ "message": "an error has occurred during processing sql" });
   }
+
+});
+
+app.get('/product/:id', logRequest, async (req, res) => {
 
 });
 
