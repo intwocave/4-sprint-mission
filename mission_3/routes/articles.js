@@ -35,7 +35,70 @@ router.route('/')
     }
   })
 
-  
+  // Inquiry all products
+  .get(async (req, res) => {
+    const { 
+      offset = 0, 
+      limit = 10, 
+      sort = 'recent',
+      search = ''
+    } = req.query;
+
+    let articlesSort = '';
+
+    switch (sort) {
+      case 'old':
+        articlesSort = 'asc';
+        break;
+
+      case 'recent':
+      default:
+        articlesSort = 'desc';
+    }
+
+    try {
+      const articles = await prisma.article.findMany({
+        select: {
+          id: true,
+          title: true,
+          content: true,
+          createdAt: true
+        },
+        orderBy: {
+          createdAt: articlesSort
+        },
+        where: {
+          OR: [
+            {
+              title: {
+                contains: search,
+                mode: 'insensitive',
+             }
+            },
+            {
+              content: {
+                contains: search,
+                mode: 'insensitive',
+              }
+            }
+          ],
+        },
+        skip: offset * limit,
+        take: limit
+      });
+
+      if (articles)
+        res.status(200).json(articles);
+      else 
+        res.status(404).json({ message: `Cannot find product with ID ${id}` });
+    } catch (err) {
+      console.error('An error has occurred: ', err.message);
+
+      res.status(500).json({ message: "An error has occurred during processing sql" });
+    }
+  });
+
+
 
 router.route('/:id')
 
