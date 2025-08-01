@@ -7,7 +7,7 @@ const app = express();
 app.use(express.json());
 
 function logRequest(req, _, next) {
-  console.log(`[${req.method}] ${req.path}`)
+  console.log(`[${req.method}] ${req.originalUrl}`)
   next();
 }
 
