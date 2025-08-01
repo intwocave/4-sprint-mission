@@ -48,7 +48,8 @@ router.route('/')
     const { 
       offset = 0, 
       limit = 10, 
-      sort = 'recent' 
+      sort = 'recent',
+      search = ''
     } = req.query;
 
     let productsSort = '';
@@ -73,6 +74,22 @@ router.route('/')
         },
         orderBy: {
           createdAt: productsSort
+        },
+        where: {
+          OR: [
+            {
+              name: {
+                contains: search,
+                mode: 'insensitive',
+             }
+            },
+            {
+              description: {
+                contains: search,
+                mode: 'insensitive',
+              }
+            }
+          ],
         },
         skip: offset * limit,
         take: limit
