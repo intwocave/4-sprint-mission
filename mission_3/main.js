@@ -44,13 +44,32 @@ app.post('/product', logRequest, async (req, res) => {
   } catch (err) {
     console.error('An error has occurred: ', err);
 
-    res.status(500).json({ "message": "an error has occurred during processing sql" });
+    res.status(500).json({ message: "An error has occurred during processing sql" });
   }
 
 });
 
 app.get('/product/:id', logRequest, async (req, res) => {
+  const { id } = req.params;
+  if (!id)
+    return res.status(400).json({ "message": "Invalid parameter 'id'" });
 
+  try {
+    const product = await prisma.product.findUnique({
+      where: {
+        id: parseInt(id)
+      }
+    });
+
+    if (product)
+      res.status(200).json(product);
+    else 
+      res.status(404).json({ message: `Cannot find product with ID ${id}` })
+  } catch (err) {
+    console.error('An error has occurred: ', err.message);
+
+    res.status(500).json({ message: "An error has occurred during processing sql" });
+  }
 });
 
 app.listen(PORT, () => console.log(`Server started on port ${PORT}..`));
