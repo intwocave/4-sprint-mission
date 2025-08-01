@@ -1,5 +1,6 @@
 import express from 'express';
 import productRouter from './routes/products.js';
+import articleRouter from './routes/articles.js';
 
 const PORT = process.env.PORT || 3000;
 
@@ -15,5 +16,6 @@ function logRequest(req, _, next) {
 app.use(logRequest);
 
 app.use('/products', productRouter);
+app.use('/articles', articleRouter);
 
 app.listen(PORT, () => console.log(`Server started on port ${PORT}..`));
