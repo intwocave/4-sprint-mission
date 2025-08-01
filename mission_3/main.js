@@ -25,7 +25,7 @@ app.post('/product', logRequest, async (req, res) => {
 
   // validation logic (possible improvements with Zod library in the future)
   if ( !name || !description || !price || !tags )
-    return res.status(500).json({ message: "Invalid SQL Parameters" });
+    return res.status(400).json({ message: "Invalid SQL Parameters" });
 
   try {
     // insert into Product table
