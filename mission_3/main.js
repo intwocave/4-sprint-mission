@@ -8,7 +8,12 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
-app.post('/product', async (req, res) => {
+function logRequest(req, res, next) {
+  console.log(`[${req.method}] ${req.path}`)
+  next();
+}
+
+app.post('/product', logRequest, async (req, res) => {
 
   // destructuring field data from request body
   const {
