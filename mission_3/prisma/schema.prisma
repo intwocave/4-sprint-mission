@@ -30,7 +30,7 @@ model Article {
   title      String
   content    String
   createdAt  DateTime  @default(now())
-  updateedAt DateTime  @updatedAt
+  updatedAt DateTime  @updatedAt
   comments   Comment[]
 }
 
