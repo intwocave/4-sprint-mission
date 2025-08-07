@@ -202,4 +202,103 @@ router.route('/:id')
 
 
 
+router.route('/:id/comments')
+
+  // Add a comment
+  .post(async (req, res, next) => {
+    const { id: pid } = req.params;
+    if (!pid)
+      return res.status(400).json({ message: "Invalid parameter 'id'" });
+
+    const { 
+      name, 
+      content
+    } = req.body;
+    
+    // validation
+    if ( !name || !content || !pid ) 
+      return res.status(400).json({ message: "Invalid SQL Parameters"} );
+
+    const comment = await prisma.comment.create({
+      data: {
+        name,
+        content,
+        productId: Number(pid)
+      }
+    });
+
+    res.status(201).json(comment);
+  })
+
+  // Inquery all comments
+  .get(async (req, res, next) => {
+    const { id: pid } = req.params;
+    if (!pid)
+      return res.status(400).json({ message: "Invalid parameter 'id'" });
+
+    const comments = await prisma.comment.findMany({
+      select: {
+        id: true,
+        content: true,
+        createdAt: true
+      },
+      where: {
+        productId: Number(pid)
+      }
+    });
+
+    if (comments)
+      res.status(200).json(comments);
+    else
+      throw new Error(`Cannot find any comments with board ${board}`);
+  });
+
+
+  
+router.route('/:id/comments/:cid')
+
+  .patch(async (req, res) => {
+    const { id: pid, cid } = req.params;
+    if (!pid || !cid)
+      return res.status(400).json({ message: "Invalid parameter 'id' and 'cid'" });
+
+    const { name, content } = req.body;
+    if ( !name || !content )
+      return res.status(400).json({ message: "Invalid SQL Parameters" });
+
+    const comment = await prisma.comment.update({
+      where: {
+        id: Number(cid)
+      },
+      data: {
+        name,
+        content
+      }
+    });
+
+    if (comment)
+      res.status(200).json(comment);
+    else
+      res.status(404).json({ message: `Cannot find any comment with ID ${id}` });
+  })
+
+  .delete(async (req, res) => {
+    const { id: pid, cid } = req.params;
+    if (!pid || !cid)
+      return res.status(400).json({ message: "Invalid parameter 'id' and 'cid'" });
+
+    const deleted = await prisma.comment.delete({
+      where: {
+        id: Number(cid)
+      }
+    });
+
+    if (deleted)
+      res.status(200).json(deleted);
+    else 
+      res.status(404).json({ message: `Cannot find product with ID ${id}` });
+  });
+
+
+
   export default router;
