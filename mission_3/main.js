@@ -15,7 +15,7 @@ function logRequest(req, _, next) {
   next();
 }
 
-// middleware for loggin all http request
+// middleware for logging all http request
 app.use(logRequest);
 
 app.use('/products', productRouter);
