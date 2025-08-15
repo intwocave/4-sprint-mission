@@ -8,7 +8,9 @@ const PORT = process.env.PORT || 3000;
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  methods: ['GET', 'POST', 'PUT', 'DELETE']
+}));
 
 function logRequest(req, _, next) {
   console.log(`[${req.method}] ${req.originalUrl}`)
