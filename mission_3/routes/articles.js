@@ -6,18 +6,29 @@ const prisma = new PrismaClient();
 
 
 
+async function validateArticle (req, res, next) {
+  const {
+    title,
+    content
+  } = req.body;
+
+  // validation
+  if ( !title || !content )
+    return res.status(400).json({ message: "Invalid SQL Parameters" });
+
+  next();
+}
+
+
+
 router.route('/')
 
   // Create a post
-  .post(async (req, res) => {
+  .post(validateArticle, async (req, res) => {
     const { 
       title, 
       content 
     } = req.body;
-
-    // validation
-    if ( !title || !content )
-      return res.status(400).json({ message: "Invalid SQL Parameters" });
 
     try {
       const article = await prisma.article.create({

@@ -6,10 +6,27 @@ const prisma = new PrismaClient();
 
 
 
+async function validateProduct (req, res, next) {
+  const {
+    name,
+    description,
+    price,
+    tags
+  } = req.body;
+
+  // validation logic (possible improvements with Zod library in the future)
+  if ( !name || !description || !price || !tags )
+    return res.status(400).json({ message: "Invalid SQL Parameters" });
+
+  next();
+}
+
+
+
 router.route('/')
 
   // Upload a new product
-  .post(async (req, res) => {
+  .post(validateProduct, async (req, res) => {
     // destructuring field data from request body
     const {
       name,
@@ -17,10 +34,6 @@ router.route('/')
       price,
       tags
     } = req.body;
-
-    // validation logic (possible improvements with Zod library in the future)
-    if ( !name || !description || !price || !tags )
-      return res.status(400).json({ message: "Invalid SQL Parameters" });
 
     try {
       // insert into Product table
