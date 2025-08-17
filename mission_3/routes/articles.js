@@ -226,6 +226,8 @@ router.route('/:id/comments')
     if (!pid)
       return res.status(400).json({ message: "Invalid parameter 'id'" });
 
+    const { cursor, limit = 10 } = req.query;
+
     const comments = await prisma.comment.findMany({
       select: {
         id: true,
@@ -234,11 +236,25 @@ router.route('/:id/comments')
       },
       where: {
         articleId: Number(pid)
-      }
+      },
+      orderBy: {
+        id: 'asc'
+      },
+      take: Number(limit),
+      ...(cursor
+        ? {
+          skip: 1,
+          cursor: { id: Number(cursor) }
+        }
+        : {}
+      )
     });
 
     if (comments)
-      res.status(200).json(comments);
+      res.status(200).json({
+        comments,
+        nextCursor
+      });
     else
       throw new Error(`Cannot find any comments with board ${board}`);
   });
