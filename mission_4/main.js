@@ -1,9 +1,9 @@
 import express from 'express';
 import cors from 'cors';
-import productRouter from './routes/products.js';
-import articleRouter from './routes/articles.js';
-import imageRouter from './routes/images.js';
-import errorHandler from './routes/handler/errorHandler.js';
+import productRouter from './src/router/productRouter.js';
+import articleRouter from './src/router/articleRouter.js';
+import imageRouter from './src/router/imageRouter.js';
+import errorHandler from './src/handler/errorHandler.js';
 
 const PORT = process.env.PORT || 3000;
 

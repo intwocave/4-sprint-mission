@@ -1,52 +1,42 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
+import { validateProduct } from '../middleware/validator.js';
 
 const router = express.Router();
 const prisma = new PrismaClient();
 
-
-
-async function validateArticle (req, res, next) {
-  const {
-    title,
-    content
-  } = req.body;
-
-  // validation
-  if ( !title || !content )
-    return res.status(400).json({ message: "Invalid SQL Parameters" });
-
-  next();
-}
-
-
-
 router.route('/')
 
-  // Create a post
-  .post(validateArticle, async (req, res) => {
-    const { 
-      title, 
-      content 
+  // Upload a new product
+  .post(validateProduct, async (req, res) => {
+    // destructuring field data from request body
+    const {
+      name,
+      description,
+      price,
+      tags
     } = req.body;
 
     try {
-      const article = await prisma.article.create({
+      // insert into Product table
+      const product = await prisma.product.create({
         data: {
-          title,
-          content
+          name,
+          description,
+          price,
+          tags
         }
       });
 
-      res.status(201).json(article);
+      // send 201 response status code indicating the query was processed successfully
+      // with the Product record
+      res.status(201).json(product);
     } catch (err) {
-      console.error('An error has occurred: ', err);
-
-      res.status(500).json({ message: "An error has occurred during processing sql" });
+      next(err);
     }
   })
 
-  // Inquiry all articles
+  // Inquiry all products
   .get(async (req, res) => {
     const { 
       offset = 0, 
@@ -55,39 +45,29 @@ router.route('/')
       search = ''
     } = req.query;
 
-    let articlesSort = '';
-
-    switch (sort) {
-      case 'old':
-        articlesSort = 'asc';
-        break;
-
-      case 'recent':
-      default:
-        articlesSort = 'desc';
-    }
+    const productsSort = sort === 'old' ? 'asc' : 'desc';
 
     try {
-      const articles = await prisma.article.findMany({
+      const products = await prisma.product.findMany({
         select: {
           id: true,
-          title: true,
-          content: true,
+          name: true,
+          price: true,
           createdAt: true
         },
         orderBy: {
-          createdAt: articlesSort
+          createdAt: productsSort
         },
         where: {
           OR: [
             {
-              title: {
+              name: {
                 contains: search,
                 mode: 'insensitive',
              }
             },
             {
-              content: {
+              description: {
                 contains: search,
                 mode: 'insensitive',
               }
@@ -98,10 +78,10 @@ router.route('/')
         take: limit
       });
 
-      if (articles)
-        res.status(200).json(articles);
+      if (products)
+        res.status(200).json(products);
       else 
-        res.status(404).json({ message: `Cannot find article with ID ${id}` });
+        res.status(404).json({ message: `Cannot find product` });
     } catch (err) {
       console.error('An error has occurred: ', err.message);
 
@@ -113,23 +93,23 @@ router.route('/')
 
 router.route('/:id')
 
-  // Get informations of a certain article
+  // Get informations of a certain product
   .get(async (req, res) => {
     const { id } = req.params;
-    if (!id)
+    if (isNaN(id) || parseInt(id) < 0)
       return res.status(400).json({ message: "Invalid parameter 'id'" });
 
     try {
-      const article = await prisma.article.findUnique({
+      const product = await prisma.product.findUnique({
         where: {
           id: parseInt(id)
         }
       });
 
-      if (article)
-        res.status(200).json(article);
+      if (product)
+        res.status(200).json(product);
       else 
-        res.status(404).json({ message: `Cannot find article with ID ${id}` })
+        res.status(404).json({ message: `Cannot find product with ID ${id}` })
     } catch (err) {
       console.error('An error has occurred: ', err.message);
 
@@ -137,27 +117,30 @@ router.route('/:id')
     }
   })
 
-  // Modify a article property
+  // Modify a product property
   .patch(async (req, res) => {
     const { id } = req.params;
-    if (!id) 
+    if (isNaN(id) || parseInt(id) < 0)
       return res.status(400).json({ message: "Invalid parameter 'id'" });
 
-    // Columns in model Article
-    const articleCols = [
-      "title",
-      "content"
+    // Attributes in model Product
+    const productCols = [
+      "name",
+      "description",
+      "price",
+      "tags"
     ];
 
+    // Possible improvement?
     const filteredBody = Object.entries(req.body)
-      .filter(e => articleCols.includes(e[0]))
+      .filter(e => productCols.includes(e[0]))
       .reduce((obj, ele) => {
-        obj[ele[0]] = ele[1];
+        obj[ele[0]] = ele[1]
         return obj;
       }, {});
-
+    
     try {
-      const article = await prisma.article.update({
+      const product = await prisma.product.update({
         where: {
           id: Number(id)
         },
@@ -166,10 +149,10 @@ router.route('/:id')
         }
       });
 
-      if (article)
-        res.status(200).json(article);
-      else
-        res.status(404).json({ message: `Cannot find article with ID ${id}` });
+      if (product)
+        res.status(200).json(product);
+      else 
+        res.status(404).json({ message: `Cannot find product with ID ${id}` });
     } catch (err) {
       console.error('An error has occurred: ', err.message);
 
@@ -177,14 +160,14 @@ router.route('/:id')
     }
   })
 
-  // Delete a particular article
+  // Delete a particular product
   .delete(async (req, res) => {
     const { id } = req.params;
-    if (!id)
+    if (isNaN(id) || parseInt(id) < 0)
       return res.status(400).json({ message: "Invalid parameter 'id'" });
 
     try {
-      const deleted = await prisma.article.delete({
+      const deleted = await prisma.product.delete({
         where: {
           id: Number(id)
         }
@@ -193,7 +176,7 @@ router.route('/:id')
       if (deleted)
         res.status(200).json(deleted);
       else 
-        res.status(404).json({ message: `Cannot find article with ID ${id}` });
+        res.status(404).json({ message: `Cannot find product with ID ${id}` });
     } catch (err) {
       console.error('An error has occurred: ', err.message);
 
@@ -224,7 +207,7 @@ router.route('/:id/comments')
       data: {
         name,
         content,
-        articleId: Number(pid)
+        productId: Number(pid)
       }
     });
 
@@ -246,7 +229,7 @@ router.route('/:id/comments')
         createdAt: true
       },
       where: {
-        articleId: Number(pid)
+        productId: Number(pid)
       },
       orderBy: {
         id: 'asc'
@@ -260,6 +243,8 @@ router.route('/:id/comments')
         : {}
       )
     });
+
+    const nextCursor = comments.length > 0 ? comments[comments.length - 1] : null;
 
     if (comments)
       res.status(200).json({
@@ -313,9 +298,9 @@ router.route('/:id/comments/:cid')
     if (deleted)
       res.status(200).json(deleted);
     else 
-      res.status(404).json({ message: `Cannot find article with ID ${id}` });
+      res.status(404).json({ message: `Cannot find product with ID ${id}` });
   });
 
 
 
-export default router;
+  export default router;

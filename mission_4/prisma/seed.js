@@ -11,7 +11,7 @@ async function main() {
       name: "게이밍 노트북",
       description: "고성능 게이밍 및 작업용 노트북",
       price: 1800000,
-      tags: "노트북,게이밍,고성능",
+      tags: ["노트북", "게이밍", "고성능",],
       comments: {
         create: [
           { name: "홍길동", content: "배틀그라운드도 잘 돌아가네요!" },
@@ -26,7 +26,7 @@ async function main() {
       name: "기계식 키보드",
       description: "청축 기계식 키보드, 타건감이 뛰어남",
       price: 120000,
-      tags: "키보드,기계식,청축",
+      tags: ["키보드","기계식","청축",],
       comments: {
         create: [
           { name: "이영희", content: "타이핑할 맛이 납니다." }

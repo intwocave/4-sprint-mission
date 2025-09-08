@@ -18,3 +18,16 @@ export async function validateProduct (req, res, next) {
 
   next();
 };
+
+export async function validateArticle (req, res, next) {
+  const {
+    title,
+    content
+  } = req.body;
+
+  // validation
+  if ( !title || !content )
+    return res.status(400).json({ message: "Invalid SQL Parameters" });
+
+  next();
+};
