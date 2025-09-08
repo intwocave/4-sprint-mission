@@ -1,6 +1,7 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
 import { validateProduct } from '../middleware/validator.js';
+import auth from '../middleware/auth.js';
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -8,7 +9,7 @@ const prisma = new PrismaClient();
 router.route('/')
 
   // Upload a new product
-  .post(validateProduct, async (req, res) => {
+  .post(auth.verifyAccessToken, validateProduct, async (req, res) => {
     // destructuring field data from request body
     const {
       name,

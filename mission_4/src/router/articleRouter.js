@@ -1,5 +1,6 @@
 import express from "express";
 import { validateArticle } from "../middleware/index.js";
+import auth from '../middleware/auth.js';
 import {
   createPost,
   getPosts,
@@ -18,7 +19,7 @@ router
   .route("/")
 
   // Create a post
-  .post(validateArticle, createPost)
+  .post(auth.verifyAccessToken, validateArticle, createPost)
 
   // Inquiry all articles
   .get(getPosts);
@@ -47,8 +48,10 @@ router
 router
   .route("/:id/comments/:cid")
 
+  // Modify comment
   .patch(patchComment)
 
+  // Delete comment
   .delete(deleteComment);
 
 export default router;
