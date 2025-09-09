@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import productRouter from './src/router/productRouter.js';
 import articleRouter from './src/router/articleRouter.js';
 import imageRouter from './src/router/imageRouter.js';
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
 }));
+app.use(cookieParser());
 
 function logRequest(req, _, next) {
   console.log(`[${req.method}] ${req.originalUrl}`)
