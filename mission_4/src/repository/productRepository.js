@@ -1,12 +1,19 @@
 import prisma from "../../lib/prisma.js";
 
-export async function createProduct({ name, description, price, tags }) {
+export async function createProduct({
+  userId,
+  name,
+  description,
+  price,
+  tags,
+}) {
   return await prisma.product.create({
     data: {
       name,
       description,
       price,
       tags,
+      userId,
     },
   });
 }
@@ -78,12 +85,13 @@ export async function deleteProduct(id) {
   return result;
 }
 
-export async function postComment({ pid, name, content }) {
+export async function postComment({ userId, pid, name, content }) {
   const result = await prisma.comment.create({
     data: {
+      userId,
       name,
       content,
-      productId: Number(pid),
+      productId: pid,
     },
   });
 
@@ -110,6 +118,16 @@ export async function getComments({ pid, cursor, limit }) {
           cursor: { id: Number(cursor) },
         }
       : {}),
+  });
+
+  return result;
+}
+
+export async function getComment(cid) {
+  const result = await prisma.comment.findUnique({
+    where: {
+      id: cid,
+    },
   });
 
   return result;

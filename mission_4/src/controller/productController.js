@@ -3,6 +3,7 @@ import * as productService from "../services/productService.js";
 export async function createProduct(req, res, next) {
   // destructuring field data from request body
   const { name, description, price, tags } = req.body;
+  const userId = req.user.userId;
 
   if (!name || !description || !price || !tags) {
     const err = new Error();
@@ -14,6 +15,7 @@ export async function createProduct(req, res, next) {
   try {
     // insert into Product table
     const product = await productService.createProduct({
+      userId,
       name,
       description,
       price,
@@ -135,6 +137,7 @@ export async function deleteProduct(req, res, next) {
 export async function postComment(req, res, next) {
   const { id: pid } = req.params;
   const { name, content } = req.body;
+  const userId = req.user.userId;
 
   // validation
   if (!name || !content || !pid) {
@@ -146,6 +149,7 @@ export async function postComment(req, res, next) {
   try {
     // insert into Comment table
     const comment = await productService.postComment({
+      userId,
       pid: Number(pid),
       name,
       content,

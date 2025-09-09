@@ -87,7 +87,7 @@ export async function postComment({ userId, pid, name, content }) {
     data: {
       name,
       content,
-      articleId: Number(pid),
+      articleId: pid,
       userId,
     },
   });

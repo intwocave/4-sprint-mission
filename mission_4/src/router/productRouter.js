@@ -25,25 +25,47 @@ router
   .get(productController.getProduct)
 
   // Modify a product property
-  .patch(productController.patchProduct)
+  .patch(
+    auth.verifyAccessToken,
+    auth.verifyProductAuth,
+    productController.patchProduct
+  )
 
   // Delete a particular product
-  .delete(productController.deleteProduct);
+  .delete(
+    auth.verifyAccessToken,
+    auth.verifyProductAuth,
+    productController.deleteProduct
+  );
 
 router
   .route("/:id/comments")
 
   // Add a comment
-  .post(productController.postComment)
+  .post(
+    auth.verifyAccessToken,
+    auth.checkProductExist,
+    productController.postComment
+  )
 
   // Inquery all comments
-  .get(productController.getComments);
+  .get(auth.checkProductExist, productController.getComments);
 
 router
   .route("/:id/comments/:cid")
 
-  .patch(productController.patchComment)
+  .patch(
+    auth.verifyAccessToken,
+    auth.checkProductExist,
+    auth.verifyProductCommentAuth,
+    productController.patchComment
+  )
 
-  .delete(productController.deleteComment);
+  .delete(
+    auth.verifyAccessToken,
+    auth.checkProductExist,
+    auth.verifyProductCommentAuth,
+    productController.deleteComment
+  );
 
 export default router;

@@ -14,7 +14,7 @@ export async function validateProduct (req, res, next) {
   if (isNaN(price))
     return res.status(400).json({ message: "Price must be a number" });
 
-  if (!Array.isArray(tags) || !tags.every(tag => typeof tag !== 'string'))
+  if (!Array.isArray(tags) || !tags.every(tag => typeof tag === 'string'))
     return res.status(400).json({ message: "Tags must be an array of string" });
 
   next();

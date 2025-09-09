@@ -122,28 +122,28 @@ export async function deletePost(req, res, next) {
 
 export async function postComment(req, res, next) {
   const { id: pid } = req.params;
+  const { name, content } = req.body;
   const userId = req.user.userId;
-  
-  if (!pid) {
+
+  if (!name || !content || !pid) {
     const err = new Error();
     err.statusCode = 400;
     err.message = "Invalid parameter 'id'";
     next(err);
   }
 
-  const { name, content } = req.body;
+  try {
+    const comment = await articleService.postComment({
+      userId,
+      name,
+      content,
+      pid: Number(pid),
+    });
 
-  // validation
-  if (!name || !content || !pid) {
-    const err = new Error();
-    err.statusCode = 400;
-    err.message = "Invalid SQL Parameters";
+    res.status(201).json(comment);
+  } catch (err) {
     next(err);
   }
-
-  const comment = await articleService.postComment({ userId, name, content, pid });
-
-  res.status(201).json(comment);
 }
 
 export async function getComments(req, res, next) {
