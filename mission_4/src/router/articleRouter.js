@@ -1,6 +1,6 @@
 import express from "express";
 import { validateArticle } from "../middleware/index.js";
-import auth from '../middleware/auth.js';
+import auth from "../middleware/auth.js";
 import {
   createPost,
   getPosts,
@@ -31,16 +31,16 @@ router
   .get(getPost)
 
   // Modify a article property
-  .patch(patchPost)
+  .patch(auth.verifyAccessToken, auth.verifyArticleAuth, patchPost)
 
   // Delete a particular article
-  .delete(deletePost);
+  .delete(auth.verifyAccessToken, auth.verifyArticleAuth, deletePost);
 
 router
   .route("/:id/comments")
 
   // Add a comment
-  .post(postComment)
+  .post(auth.verifyAccessToken, postComment)
 
   // Inquery all comments
   .get(getComments);
@@ -49,9 +49,9 @@ router
   .route("/:id/comments/:cid")
 
   // Modify comment
-  .patch(patchComment)
+  .patch(auth.verifyAccessToken, auth.verifyArticleCommentAuth, patchComment)
 
   // Delete comment
-  .delete(deleteComment);
+  .delete(auth.verifyAccessToken, auth.verifyArticleCommentAuth, deleteComment);
 
 export default router;

@@ -1,3 +1,4 @@
+// Verify required parameters are okay
 export async function validateProduct (req, res, next) {
   const {
     name,
@@ -19,6 +20,7 @@ export async function validateProduct (req, res, next) {
   next();
 };
 
+// Verify required parameters are okay
 export async function validateArticle (req, res, next) {
   const {
     title,

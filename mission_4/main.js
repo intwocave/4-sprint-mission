@@ -3,6 +3,8 @@ import cors from 'cors';
 import productRouter from './src/router/productRouter.js';
 import articleRouter from './src/router/articleRouter.js';
 import imageRouter from './src/router/imageRouter.js';
+import userRouter from './src/router/userRouter.js';
+
 import errorHandler from './src/handler/errorHandler.js';
 
 const PORT = process.env.PORT || 3000;
@@ -24,6 +26,7 @@ app.use(logRequest);
 app.use('/products', productRouter);
 app.use('/articles', articleRouter);
 app.use('/upload', imageRouter);
+app.use(userRouter);
 
 app.use(errorHandler);
 app.use('/upload', express.static('uploads'));

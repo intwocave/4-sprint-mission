@@ -31,9 +31,9 @@ export async function getUser(req, res, next) {
 
   try {
     const user = await userService.getUser(req.body);
-    const accessToken = await userService.createUser(user);
+    const accessToken = userService.createToken(user);
 
-    return res.status(200).json(accessToken);
+    return res.status(200).json({ accessToken });
   } catch (err) {
     next(err);
   }

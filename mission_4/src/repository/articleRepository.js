@@ -1,10 +1,11 @@
 import prisma from "../../lib/prisma.js";
 
-export async function createPost({ title, content }) {
+export async function createPost({ userId, title, content }) {
   return await prisma.article.create({
     data: {
       title,
       content,
+      userId,
     },
   });
 }
@@ -38,7 +39,7 @@ export async function getPosts({ offset, limit, sort, search }) {
       createdAt: true,
     },
     orderBy: {
-      createdAt: articlesSort,
+      createdAt: sort,
     },
     where,
     skip: offset * limit,
@@ -58,7 +59,7 @@ export async function getPost(id) {
   return result;
 }
 
-export async function patchPost(filteredBody) {
+export async function patchPost({ id, ...filteredBody }) {
   const result = await prisma.article.update({
     where: {
       id: Number(id),
@@ -81,12 +82,13 @@ export async function deletePost(id) {
   return result;
 }
 
-export async function postComment({ pid, name, content }) {
+export async function postComment({ userId, pid, name, content }) {
   const result = await prisma.comment.create({
     data: {
       name,
       content,
       articleId: Number(pid),
+      userId,
     },
   });
 
@@ -113,6 +115,16 @@ export async function getComments({ pid, cursor, limit }) {
           cursor: { id: Number(cursor) },
         }
       : {}),
+  });
+
+  return result;
+}
+
+export async function getComment(cid) {
+  const result = await prisma.comment.findUnique({
+    where: {
+      id: cid,
+    },
   });
 
   return result;

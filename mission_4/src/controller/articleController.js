@@ -2,6 +2,7 @@ import * as articleService from "../services/articleService.js";
 
 export async function createPost(req, res, next) {
   const { title, content } = req.body;
+  const userId = req.user.userId;
 
   if (!title || !content) {
     const err = new Error();
@@ -11,7 +12,7 @@ export async function createPost(req, res, next) {
   }
 
   try {
-    const article = await articleService.createPost({ title, content });
+    const article = await articleService.createPost({ userId, title, content });
     res.status(201).json(article);
   } catch (err) {
     next(err);
@@ -25,7 +26,7 @@ export async function getPosts(req, res, next) {
     const articles = await articleService.getPosts({
       offset,
       limit,
-      sort: articlesSort,
+      sort: sort === "old" ? "asc" : "desc",
       search,
     });
 
@@ -81,7 +82,7 @@ export async function patchPost(req, res, next) {
     }, {});
 
   try {
-    const article = await articleService.patchPost(filteredBody);
+    const article = await articleService.patchPost({ id, ...filteredBody });
 
     if (article) res.status(200).json(article);
     else {
@@ -121,6 +122,8 @@ export async function deletePost(req, res, next) {
 
 export async function postComment(req, res, next) {
   const { id: pid } = req.params;
+  const userId = req.user.userId;
+  
   if (!pid) {
     const err = new Error();
     err.statusCode = 400;
@@ -138,7 +141,7 @@ export async function postComment(req, res, next) {
     next(err);
   }
 
-  const comment = await articleService.postComment({ name, content, pid });
+  const comment = await articleService.postComment({ userId, name, content, pid });
 
   res.status(201).json(comment);
 }
