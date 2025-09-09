@@ -1,5 +1,6 @@
+import e from "express";
 import prisma from "../../lib/prisma.js";
-import bcrypt from 'bcrypt';
+import bcrypt from "bcrypt";
 
 export async function createUser(user) {
   const hashedPassword = await hashPassword(user.password);
@@ -11,9 +12,7 @@ export async function createUser(user) {
     },
   });
 
-  const { id: createdUserId } = filterSensitiveUserData(createdUser);
-
-  return createdUserId;
+  return createdUser;
 }
 
 export async function findByEmail(email) {
@@ -26,9 +25,19 @@ export async function findByEmail(email) {
   return result;
 }
 
-async function hashPassword(password) {
+export async function findById(id) {
+  const result = await prisma.user.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  return result;
+}
+
+export async function hashPassword(password) {
   const salt = await bcrypt.genSalt(10);
-  const hash = await bcrypt.hash(password, salt)
+  const hash = await bcrypt.hash(password, salt);
 
   return hash;
 }
@@ -36,4 +45,17 @@ async function hashPassword(password) {
 export function filterSensitiveUserData(user) {
   const { password, ...rest } = user;
   return rest;
+}
+
+export async function updateUser(id, toUpdate) {
+  if (toUpdate.password) {
+    toUpdate.password = await hashPassword(toUpdate.password);
+  }
+
+  const updatedUser = await prisma.user.update({
+    where: { id },
+    data: toUpdate,
+  });
+
+  return updatedUser;
 }

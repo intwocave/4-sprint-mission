@@ -156,3 +156,14 @@ export async function deleteComment(cid) {
 
   return result;
 }
+
+export async function getProductsByUser(userId) {
+  const products = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      Product: true,
+    },
+  });
+
+  return products;
+}

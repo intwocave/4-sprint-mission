@@ -1,4 +1,5 @@
 import * as userRepository from "../repository/userRepository.js";
+import * as productRepository from "../repository/productRepository.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
@@ -13,7 +14,10 @@ export async function createUser(user) {
     throw err;
   }
 
-  const createdUserId = await userRepository.createUser(user);
+  const createdUser = await userRepository.createUser(user);
+  const createdUserId = await userRepository.filterSensitiveUserData(
+    createdUser
+  ).id;
 
   return createdUserId;
 }
@@ -35,6 +39,18 @@ export async function getUser({ email, password }) {
   return userRepository.filterSensitiveUserData(user);
 }
 
+export async function getUserById(userId) {
+  const user = await userRepository.findById(userId);
+
+  if (!user) {
+    const err = new Error("User not found");
+    err.statusCode = 404;
+    throw err;
+  }
+
+  return userRepository.filterSensitiveUserData(user);
+}
+
 async function verifyPassword(inputPassword, password) {
   const isVerified = await bcrypt.compare(inputPassword, password);
 
@@ -50,4 +66,32 @@ export function createToken(user) {
   const options = { expiresIn: "1h" };
 
   return jwt.sign(payload, process.env.JWT_SECRET, options);
+}
+
+export async function updateUserInfo(userId, toUpdate) {
+  // 수정할 내용이 없다면 에러 처리
+  if (Object.keys(toUpdate).length === 0) {
+    const err = new Error("No data to update");
+    err.statusCode = 400;
+    throw err;
+  }
+
+  const updatedUser = await userRepository.updateUser(userId, toUpdate);
+
+  return userRepository.filterSensitiveUserData(updatedUser);
+}
+
+export async function updateUserPassword(userId, newPassword) {
+  const hashedPassword = await userRepository.hashPassword(newPassword);
+  const user = await userRepository.updateUser(userId, {
+    password: hashedPassword,
+  });
+
+  return userRepository.filterSensitiveUserData(user);
+}
+
+export async function getMyProducts(userId) {
+  const products = await productRepository.getProductsByUser(userId);
+
+  return products.Product;
 }
