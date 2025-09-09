@@ -61,11 +61,24 @@ async function verifyPassword(inputPassword, password) {
   }
 }
 
-export function createToken(user) {
+export function createToken(user, token) {
   const payload = { userId: user.id };
-  const options = { expiresIn: "1h" };
+  const options = { expiresIn: token === "refresh" ? "2w" : "1h" };
 
   return jwt.sign(payload, process.env.JWT_SECRET, options);
+}
+
+export async function refreshToken(userId, refreshToken) {
+  const user = await userRepository.findById(userId);
+
+  if (!user || user.refreshToken !== refreshToken) {
+    const err = new Error("Unauthorized");
+    err.statusCode = 404;
+    throw err;
+  }
+
+  const accessToken = createToken(user);
+  return accessToken;
 }
 
 export async function updateUserInfo(userId, toUpdate) {

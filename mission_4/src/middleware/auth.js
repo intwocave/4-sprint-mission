@@ -9,6 +9,13 @@ const verifyAccessToken = expressjwt({
   requestProperty: "user",
 });
 
+// refresh 토큰 검증
+const verifyRefreshToken = expressjwt({
+  secret: process.env.JWT_SECRET,
+  algorithms: ["HS256"],
+  getToken: (req) => req.cookies.refreshToken,
+});
+
 // 게시글 유저 검증
 const verifyArticleAuth = async (req, res, next) => {
   // Get article id
@@ -143,6 +150,7 @@ const verifyProductCommentAuth = async (req, res, next) => {
 
 export default {
   verifyAccessToken,
+  verifyRefreshToken,
   verifyArticleAuth,
   verifyProductAuth,
   checkArticleExist,

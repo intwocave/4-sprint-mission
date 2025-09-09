@@ -43,7 +43,7 @@ export async function hashPassword(password) {
 }
 
 export function filterSensitiveUserData(user) {
-  const { password, ...rest } = user;
+  const { password, refreshToken, ...rest } = user;
   return rest;
 }
 

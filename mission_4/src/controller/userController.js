@@ -32,6 +32,13 @@ export async function getAccessToken(req, res, next) {
   try {
     const user = await userService.getUser(req.body);
     const accessToken = userService.createToken(user);
+    const refreshToken = userService.createToken(user, "refresh");
+    await userService.updateUserInfo(user.id, { refreshToken });
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      sameSite: "None",
+      secure: true,
+    });
 
     return res.status(200).json({ accessToken });
   } catch (err) {
@@ -96,6 +103,25 @@ export async function getMyProducts(req, res, next) {
     const products = await userService.getMyProducts(userId);
 
     return res.status(200).json(products);
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function getRefreshToken(req, res, next) {
+  const userId = req.auth.userId;
+  const refreshToken = req.cookies.refreshToken;
+
+  if (!refreshToken) {
+    const err = new Error("Unauthorized");
+    err.statusCode = 401;
+    next(err);
+  }
+
+  try {
+    const accessToken = await userService.refreshToken(userId, refreshToken);
+
+    return res.status(200).json({ accessToken });
   } catch (err) {
     next(err);
   }

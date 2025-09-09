@@ -35,5 +35,10 @@ userRouter.get(
 );
 
 userRouter.post("/login", userController.getAccessToken);
+userRouter.post(
+  "/login/refresh",
+  auth.verifyRefreshToken,
+  userController.getRefreshToken
+);
 
 export default userRouter;
