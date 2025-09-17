@@ -6,7 +6,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "start": "NODE_ENV=production node dist/main.js",
-    "dev": "nodemon"
+    "dev": "ts-node src/main.ts",
+    "dev:server": "nodemon"
   },
   "keywords": [],
   "author": "",
