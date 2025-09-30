@@ -17,6 +17,7 @@ CREATE TABLE users (
 /* products 테이블 생성 */
 CREATE TABLE products (
 	id SERIAL PRIMARY KEY,
+	user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
 	name VARCHAR(10) NOT NULL,
 	description TEXT NOT NULL CHECK (char_length(description) >= 10),
 	price INTEGER NOT NULL CHECK (price >= 0),
