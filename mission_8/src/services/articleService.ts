@@ -1,4 +1,5 @@
 import * as articleRepository from "../repository/articleRepository.js";
+import notificationService from "./notificationService.js";
 import type {
   CreatePostDTO,
   GetPostsDTO,
@@ -42,9 +43,23 @@ export async function deletePost(id: DeletePostDTO) {
 }
 
 export async function postComment(data: PostCommentDTO) {
-  const result = await articleRepository.postComment(data);
+  const newComment = await articleRepository.postComment(data);
 
-  return result;
+  const article = await articleRepository.getPost({ id: data.aid });
+  if (!article) {
+    return newComment;
+  }
+
+  if (article.userId !== data.userId) {
+    const message = `내가 판매 신청한 매물에 새로운 댓글이 달렸습니다.`;
+    await notificationService.createNotification(
+      article.userId,
+      message,
+      article.id
+    );
+  }
+
+  return newComment;
 }
 
 export async function getComments(data: GetCommentsDTO) {
