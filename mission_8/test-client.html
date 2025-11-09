@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Socket.IO Test Client</title>
+    <style>
+      body { font-family: sans-serif; padding: 20px; }
+      #userIdInput { padding: 5px; }
+      #joinBtn { padding: 5px 10px; }
+      #log { margin-top: 20px; border: 1px solid #ccc; padding: 10px; height: 400px; overflow-y: scroll; background-color: #f9f9f9; }
+      .event { border-bottom: 1px solid #eee; padding: 5px 0; }
+      .event-name { font-weight: bold; color: #007bff; }
+    </style>
+  </head>
+  <body>
+    <h1>Socket.IO 알림 테스트 클라이언트</h1>
+    <input type="text" id="userIdInput" placeholder="사용자 ID (예: 1) 입력" />
+    <button id="joinBtn">연결 및 채널 참가</button>
+    <div id="log">
+      <p>서버 로그가 여기에 표시됩니다...</p>
+    </div>
+
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script>
+      const log = document.getElementById('log');
+      const userIdInput = document.getElementById('userIdInput');
+      const joinBtn = document.getElementById('joinBtn');
+      let socket;
+
+      function logEvent(eventName, data) {
+        const eventDiv = document.createElement('div');
+        eventDiv.classList.add('event');
+        eventDiv.innerHTML = `<span class="event-name">[${eventName}]</span>: ${JSON.stringify(data, null, 2)}`;
+        log.appendChild(eventDiv);
+        log.scrollTop = log.scrollHeight;
+      }
+
+      joinBtn.addEventListener('click', () => {
+        const userId = userIdInput.value;
+        if (!userId) {
+          alert('사용자 ID를 입력하세요.');
+          return;
+        }
+
+        if (socket) {
+          socket.disconnect();
+        }
+        
+        log.innerHTML = ''; // Clear log
+
+        // 서버 주소는 실제 실행 환경에 맞게 변경해야 할 수 있습니다.
+        socket = io('http://localhost:3000');
+
+        socket.on('connect', () => {
+          logEvent('connect', { id: socket.id });
+          
+          // 연결 성공 후, 'join' 이벤트를 보내 사용자 ID 기반의 room에 참가
+          socket.emit('join', userId);
+          logEvent('join', `Sent join request for userId: ${userId}`);
+        });
+
+        socket.on('disconnect', () => {
+          logEvent('disconnect', 'Connection lost');
+        });
+
+        // 서버로부터 오는 새로운 알림을 리스닝
+        socket.on('new_notification', (data) => {
+          logEvent('new_notification', data);
+        });
+
+        // 안 읽은 알림 개수 업데이트를 리스닝
+        socket.on('unread_count', (data) => {
+          logEvent('unread_count', data);
+        });
+      });
+    </script>
+  </body>
+</html>
