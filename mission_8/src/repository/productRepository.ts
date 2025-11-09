@@ -195,3 +195,41 @@ export async function getProductsByUser(data: GetProductsByUserDTO) {
 
   return products;
 }
+
+export async function findLike(userId: number, productId: number) {
+  return prisma.likedProduct.findUnique({
+    where: {
+      userId_productId: {
+        userId,
+        productId,
+      },
+    },
+  });
+}
+
+export async function likeProduct(userId: number, productId: number) {
+  return prisma.likedProduct.create({
+    data: {
+      userId,
+      productId,
+    },
+  });
+}
+
+export async function unlikeProduct(userId: number, productId: number) {
+  return prisma.likedProduct.delete({
+    where: {
+      userId_productId: {
+        userId,
+        productId,
+      },
+    },
+  });
+}
+
+export async function getLikedUsersByProductId(productId: number) {
+  return prisma.likedProduct.findMany({
+    where: { productId },
+    select: { userId: true },
+  });
+}

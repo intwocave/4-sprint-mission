@@ -254,6 +254,24 @@ const deleteComment: RequestHandler = async function (req, res, next) {
   }
 };
 
+const toggleLike: RequestHandler = async function (req, res, next) {
+  try {
+    const userId = req.user.userId;
+    const productId = parseInt(req.params.id, 10);
+
+    if (isNaN(productId)) {
+      const err = new Error("Invalid product ID");
+      err.statusCode = 400;
+      return next(err);
+    }
+
+    const result = await productService.toggleLike(userId, productId);
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export {
   createProduct,
   getProducts,
@@ -264,4 +282,5 @@ export {
   getComments,
   patchComment,
   deleteComment,
+  toggleLike,
 };

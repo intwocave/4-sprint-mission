@@ -39,6 +39,13 @@ router
     productController.deleteProduct
   );
 
+// Like or unlike a product
+router.post(
+  "/:id/like",
+  auth.verifyAccessToken,
+  productController.toggleLike
+);
+
 router
   .route("/:id/comments")
 

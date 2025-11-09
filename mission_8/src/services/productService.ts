@@ -89,3 +89,15 @@ export async function deleteComment(data: DeleteCommentDTO) {
 
   return result;
 }
+
+export async function toggleLike(userId: number, productId: number) {
+  const existingLike = await productRepository.findLike(userId, productId);
+
+  if (existingLike) {
+    await productRepository.unlikeProduct(userId, productId);
+    return { message: '관심 목록에서 삭제했습니다.' };
+  } else {
+    await productRepository.likeProduct(userId, productId);
+    return { message: '관심 목록에 추가했습니다.' };
+  }
+}
