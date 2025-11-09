@@ -45,7 +45,7 @@ export async function deletePost(id: DeletePostDTO) {
 export async function postComment(data: PostCommentDTO) {
   const newComment = await articleRepository.postComment(data);
 
-  const article = await articleRepository.getPost({ id: data.aid });
+  const article = await articleRepository.getPost({ id: data.pid });
   if (!article) {
     return newComment;
   }
