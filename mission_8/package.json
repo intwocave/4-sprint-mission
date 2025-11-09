@@ -6,8 +6,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "start": "NODE_ENV=production node dist/main.js",
-    "dev": "ts-node src/main.ts",
-    "dev:server": "nodemon"
+    "dev": "tsx watch src/main.ts"
   },
   "keywords": [],
   "author": "",
@@ -23,7 +22,8 @@
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.0.2",
     "passport": "^0.7.0",
-    "passport-jwt": "^4.0.1"
+    "passport-jwt": "^4.0.1",
+    "tsx": "^4.20.6"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
@@ -33,9 +33,7 @@
     "@types/express-jwt": "^6.0.4",
     "@types/multer": "^2.0.0",
     "@types/node": "^24.3.1",
-    "nodemon": "^3.1.10",
     "prisma": "^6.13.0",
-    "ts-node": "^10.9.2",
     "typescript": "^5.9.2"
   },
   "prisma": {
