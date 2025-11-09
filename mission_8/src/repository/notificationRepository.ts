@@ -10,8 +10,8 @@ async function create(
     data: {
       userId,
       message,
-      articleId,
-      productId,
+      articleId: articleId ?? null,
+      productId: productId ?? null,
     },
   });
 }

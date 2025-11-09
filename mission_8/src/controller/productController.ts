@@ -255,6 +255,18 @@ const deleteComment: RequestHandler = async function (req, res, next) {
 };
 
 const toggleLike: RequestHandler = async function (req, res, next) {
+  if (!req.user) {
+    const err = new Error("Unauthorized");
+    err.statusCode = 401;
+    return next(err);
+  }
+
+  if (!req.params.id) {
+    const err = new Error("Invalid parameter 'id'");
+    err.statusCode = 400;
+    return next(err);
+  }
+
   try {
     const userId = req.user.userId;
     const productId = parseInt(req.params.id, 10);
