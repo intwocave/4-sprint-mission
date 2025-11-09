@@ -1,4 +1,5 @@
 import * as productRepository from "../repository/productRepository.js";
+import notificationService from "./notificationService.js";
 import type {
   CreateProductDTO,
   GetProductsDTO,
@@ -30,9 +31,33 @@ export async function getProduct(data: GetProductDTO) {
 }
 
 export async function patchProduct(data: PatchProductDTO) {
-  const result = await productRepository.patchProduct(data);
+  const { id, price: newPrice } = data;
 
-  return result;
+  const originalProduct = await productRepository.getProduct({ id: Number(id) });
+  if (!originalProduct) {
+    throw new Error("상품이 존재하지 않습니다.");
+  }
+  const oldPrice = originalProduct.price;
+
+  const updatedProduct = await productRepository.patchProduct(data);
+
+  if (newPrice !== undefined && newPrice !== oldPrice) {
+    const likedUsers = await productRepository.getLikedUsersByProductId(
+      Number(id)
+    );
+
+    for (const liked of likedUsers) {
+      const message = `'${originalProduct.name}' 상품의 가격이 ${oldPrice}원에서 ${newPrice}원으로 변경되었습니다.`;
+      await notificationService.createNotification(
+        liked.userId,
+        message,
+        undefined,
+        Number(id)
+      );
+    }
+  }
+
+  return updatedProduct;
 }
 
 export async function deleteProduct(data: DeleteProductDTO) {

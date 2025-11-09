@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 import productRouter from "./router/productRouter.js";
 import articleRouter from "./router/articleRouter.js";
 import imageRouter from "./router/imageRouter.js";
+import notificationRouter from "./router/notificationRouter.js";
 import userRouter from "./router/userRouter.js";
 
 import errorHandler from "./handler/errorHandler.js";
@@ -34,6 +35,7 @@ app.use(logRequest);
 app.use("/products", productRouter);
 app.use("/articles", articleRouter);
 app.use("/upload", imageRouter);
+app.use(notificationRouter);
 app.use(userRouter);
 
 app.use(errorHandler);
