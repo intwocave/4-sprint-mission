@@ -1,4 +1,4 @@
-import notificationRepository from './notificationRepository.js';
+import notificationRepository from '../repository/notificationRepository.js';
 import { getIO } from '../lib/socket.js';
 
 async function createNotification(
