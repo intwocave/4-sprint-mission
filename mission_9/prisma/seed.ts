@@ -13,6 +13,7 @@ async function main() {
       nickname: 'Alice',
       password,
       image: 'https://i.pravatar.cc/150?u=user1@example.com',
+      refreshToken: 'some-refresh-token',
     },
   });
 
@@ -66,7 +67,7 @@ async function main() {
   });
 
   // create comments
-  await prisma.comment.create({
+  const comment1 = await prisma.comment.create({
     data: {
       name: 'Commenter1',
       content: 'Great article!',
@@ -75,7 +76,7 @@ async function main() {
     },
   });
 
-  await prisma.comment.create({
+  const comment2 = await prisma.comment.create({
     data: {
       name: 'Commenter2',
       content: 'I love this laptop!',
@@ -84,7 +85,66 @@ async function main() {
     },
   });
 
-  console.log({ user1, user2, article1, article2, product1, product2 });
+  const comment3 = await prisma.comment.create({
+    data: {
+      name: 'Commenter3',
+      content: 'This is a general comment.',
+      userId: user1.id,
+    },
+  });
+
+  const comment4 = await prisma.comment.create({
+    data: {
+      name: 'Commenter4',
+      content: 'This comment is for both an article and a product.',
+      userId: user2.id,
+      articleId: article2.id,
+      productId: product2.id,
+    },
+  });
+
+
+  // create a liked product
+  const likedProduct = await prisma.likedProduct.create({
+    data: {
+      userId: user1.id,
+      productId: product2.id,
+    },
+  });
+
+  // create notifications
+  const notification1 = await prisma.notification.create({
+    data: {
+      userId: user1.id,
+      message: 'Your article has a new comment!',
+      articleId: article1.id,
+    },
+  });
+
+  const notification2 = await prisma.notification.create({
+    data: {
+      userId: user2.id,
+      message: 'Your product has a new comment!',
+      productId: product1.id,
+      read: true,
+    },
+  });
+
+  console.log({
+    user1,
+    user2,
+    article1,
+    article2,
+    product1,
+    product2,
+    comment1,
+    comment2,
+    comment3,
+    comment4,
+    likedProduct,
+    notification1,
+    notification2,
+  });
 }
 
 main()
