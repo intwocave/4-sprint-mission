@@ -1,0 +1,3 @@
+describe('Article Integration Test (Auth)', () => {
+  // Placeholder for future authenticated article tests
+});

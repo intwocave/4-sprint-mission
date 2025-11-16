@@ -1,0 +1,3 @@
+describe('Product Service Unit Test', () => {
+  // Placeholder for future authenticated article tests
+});
