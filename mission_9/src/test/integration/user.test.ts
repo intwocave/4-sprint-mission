@@ -36,7 +36,7 @@ describe("User Integration Test", () => {
 
   describe("POST /login", () => {
     it("should return a string of accessToken", async () => {
-      const accessToken = await getAuthToken();
+      const accessToken = await getAuthToken(mockUser.email, mockUser.password);
       expect(typeof accessToken).toBe("string");
     });
   });
