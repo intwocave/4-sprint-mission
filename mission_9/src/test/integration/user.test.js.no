@@ -1,3 +1,0 @@
-describe('User Integration Test', () => {
-  // Placeholder for future authenticated article tests
-});

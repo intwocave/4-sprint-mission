@@ -1,3 +1,0 @@
-describe('Product Integration Test (No Auth)', () => {
-  // Placeholder for future authenticated article tests
-});
