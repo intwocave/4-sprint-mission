@@ -14,7 +14,7 @@ const createUser: RequestHandler = async function (req, res, next) {
   try {
     const userId = await userService.createUser({ email, nickname, password });
 
-    return res.status(200).json(userId);
+    return res.status(200).json({ userId });
   } catch (err) {
     next(err);
   }
@@ -69,7 +69,7 @@ const updateMyInfo: RequestHandler = async function (req, res, next) {
   const userId = req.user ? req.user.userId : null;
   const { email, nickname } = req.body;
 
-  if (!email && !nickname || userId === null) {
+  if ((!email && !nickname) || userId === null) {
     const err = new Error("Required parameter is missing");
     err.statusCode = 400;
     return next(err);
@@ -137,7 +137,10 @@ const getRefreshToken: RequestHandler = async function (req, res, next) {
   }
 
   try {
-    const accessToken = await userService.refreshToken(Number(userId), refreshToken);
+    const accessToken = await userService.refreshToken(
+      Number(userId),
+      refreshToken
+    );
 
     return res.status(200).json({ accessToken });
   } catch (err) {
