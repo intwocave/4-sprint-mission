@@ -1,6 +1,6 @@
 import express from 'express';
 import { imageController } from '../controller/imageController.js';
-import { s3upload } from '../middleware/s3.js';
+import upload from '../middleware/upload.js';
 // import multer from "multer";
 
 const router = express.Router();
@@ -19,7 +19,7 @@ router.post('/', upload.single('image'), async (req, res) => {
 
 router.post(
   '/',
-  s3upload.single('image'),
+  upload.single('image'),
   imageController.uploadImage
 );
 

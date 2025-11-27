@@ -40,6 +40,7 @@ app.use(
   })
 );
 app.use(cookieParser());
+app.use("/uploads", express.static("uploads"));
 
 function logRequest(req: Request, _: Response, next: NextFunction) {
   console.log(`[${req.method}] ${req.originalUrl}`);
@@ -51,9 +52,8 @@ app.use(logRequest);
 
 app.use("/products", productRouter);
 app.use("/articles", articleRouter);
-app.use("/upload", imageRouter);
+app.use("/images", imageRouter);
 app.use(notificationRouter);
 app.use(userRouter);
 
 app.use(errorHandler);
-app.use("/upload", express.static(path.resolve("uploads")));

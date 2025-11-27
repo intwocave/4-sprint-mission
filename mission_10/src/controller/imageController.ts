@@ -6,7 +6,7 @@ class ImageController {
       return res.status(400).json({ message: '파일이 없습니다.' });
     }
 
-    const file = req.file as Express.MulterS3.File;
+    const file = req.file as any;
 
     return res.status(201).json({
       message: '이미지 업로드 성공',
