@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import multer from "multer";
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 
 const uploadDir = "uploads";
 if (!fs.existsSync(uploadDir)) {
